@@ -1,6 +1,6 @@
 import React, { JSX } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import { Colors } from "../styles/colors";
 import { PanGestureHandler } from "react-native-gesture-handler";
 import { Coordinate, Direction, GestureEventType } from "../types/Types";
@@ -9,10 +9,11 @@ import { CheckGameOver } from "../utils/CheckGameOver";
 import Food from "./Food";
 import { CheckEatsFood } from "../utils/CheckEatsFood";
 import { RandomFoodPosition } from "../utils/RandomFoodPosition";
+import Header from "./Header";
 
 const SNAKE_INITIAL_POSITION = [{ x: 5, y: 5 }];
 const FOOD_INITIAL_POSITION = { x: 5, y: 20 };
-const GAME_BOUNDS = { xMin: 0, xMax: 34, yMin: 0, yMax: 70 };
+const GAME_BOUNDS = { xMin: 0, xMax: 34, yMin: 0, yMax: 68 };
 const MOVE_INTERVAL = 50;
 const SCORE_INCREMENT = 10;
 
@@ -105,9 +106,31 @@ export default function Games(): JSX.Element {
       
     }
 
+    const reloadGame = () => {
+      setSnake(SNAKE_INITIAL_POSITION);
+      setFood(FOOD_INITIAL_POSITION);
+      setIsGameOver(false);
+      setScore(0);
+      setDirection(Direction.Right);
+      setIsPaused(false);
+    };
+
+    const pauseGame = () => {
+      setIsPaused(!isPaused);
+    };
+
   return ( 
     <PanGestureHandler onGestureEvent={handleGesture}>
          <SafeAreaView style={styles.container}>
+          <Header isPaused={isPaused} pauseGame={pauseGame}  reloadGame={reloadGame}>
+            <Text style={{
+              fontSize: 22,
+              fontWeight: 'bold',
+              color: Colors.primary
+            }}>
+              {score}
+              </Text>
+          </Header>
           <View style={styles.boundaries}>
             <Snake snake={snake}/>
             <Food x={food.x} y={food.y}/>
@@ -125,13 +148,12 @@ const styles = StyleSheet.create ({
   
   boundaries:{
     flex: 1,
-    height: 100,
-    // borderBottomLeftRadius: 30,
-    // borderBottomRightRadius: 30,
-    borderBottomWidth: 50,
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
+    borderBottomWidth: 20,
     borderColor: Colors.primary,
     borderWidth: 12,
-    borderTopWidth: 50,
+    // borderTopWidth: 50,
     backgroundColor: Colors.background,
     overflow: 'hidden'
   },
